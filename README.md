@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MAPPS Missionary Support Portal
 
-## Getting Started
+A responsive front-end prototype designed to demonstrate how missionaries could plan trips, request logistical support, track arrangements, and stay connected with MAPPS throughout their mission journey.
 
-First, run the development server:
+## Project Purpose
+
+The MAPPS Missionary Support Portal concept provides missionaries with a centralized place to prepare for upcoming mission travel and coordinate support with MAPPS.
+
+The prototype demonstrates the proposed missionary experience from initial account access through trip planning and support coordination.
+
+## Missionary Journey
+
+The prototype demonstrates the following workflow:
+
+1. Create an account
+2. Complete a missionary profile
+3. Access the missionary dashboard
+4. Enter mission and travel details
+5. Request MAPPS support
+6. Track arrangements and preparation progress
+7. Access mission preparation information
+8. Contact MAPPS for additional assistance
+
+## Prototype Screens
+
+### Login
+
+Returning missionaries can access the portal through a simple login experience. New missionaries can begin the account creation process.
+
+### Missionary Profile
+
+Collects essential missionary and ministry information including:
+
+- Contact information
+- Church or sending organization
+- Home country
+- Ministry role
+- Expected team size
+
+### Missionary Dashboard
+
+Provides an overview of the missionary's upcoming trip, including:
+
+- Mission preparation progress
+- Trip summary
+- Support request status
+- Outstanding actions
+- MAPPS support coordination
+- Visit preparation information
+
+### Plan Your Mission
+
+Allows missionaries to provide:
+
+- Destination
+- Mission dates
+- Team size
+- Mission purpose
+- Arrival and departure flight information
+- Additional travel details
+
+### Request Support
+
+Allows missionaries to request assistance with:
+
+- Accommodation
+- Airport pickup
+- Local transportation
+- Orientation
+- Ministry and local connections
+- Additional logistical or accessibility needs
+
+## Responsive Design
+
+The prototype is designed for desktop, tablet, and mobile use.
+
+Desktop devices use a full navigation menu, while tablet and mobile layouts use a responsive navigation menu to keep the portal easy to use on smaller screens.
+
+## Technology
+
+Built with:
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+## Running the Project Locally
+
+Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+npm install
