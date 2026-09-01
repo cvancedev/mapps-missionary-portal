@@ -2,6 +2,12 @@
 
 A responsive front-end prototype designed to demonstrate how missionaries could plan trips, request logistical support, track arrangements, and stay connected with MAPPS throughout their mission journey.
 
+## Live Demo
+
+The responsive prototype is deployed on Vercel:
+
+https://mapps-missionary-portal.vercel.app/
+
 ## Project Purpose
 
 The MAPPS Missionary Support Portal concept provides missionaries with a centralized place to prepare for upcoming mission travel and coordinate support with MAPPS.
