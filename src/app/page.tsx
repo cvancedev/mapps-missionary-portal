@@ -1,30 +1,123 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+
 export default function Home() {
+
+const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <main className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-green-900">
-              MAPPS Missionary Support Portal
-            </h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Missionary Planning & Support
-            </p>
-          </div>
+     <header className="border-b border-slate-200 bg-white">
+  <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
+    <div className="flex items-center justify-between gap-4">
+      <div>
+        <h1 className="text-lg font-bold tracking-tight text-green-900 sm:text-2xl">
+          MAPPS Missionary Support Portal
+        </h1>
 
-          <nav className="hidden items-center gap-7 text-sm font-medium text-slate-600 md:flex">
-            <span className="text-green-800">Dashboard</span>
-            <span>My Trip</span>
-            <span>Support</span>
-            <span>Messages</span>
-            <span>Resources</span>
+        <p className="mt-1 text-sm text-slate-500">
+          Missionary Planning &amp; Support
+        </p>
+      </div>
 
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100 font-semibold text-green-800">
-              DM
-            </div>
-          </nav>
+      {/* Desktop Navigation */}
+      <div className="hidden items-center gap-6 lg:flex">
+        <nav className="flex items-center gap-6">
+          <span className="font-medium text-emerald-700">
+            Dashboard
+          </span>
+
+        <Link
+  href="/trip"
+  className="text-slate-700 transition hover:text-emerald-700"
+>
+  My Trip
+</Link>
+
+     <Link
+  href="/support"
+  className="text-slate-700 transition hover:text-emerald-700"
+>
+  Support
+</Link>
+<span className="text-slate-700">Messages</span>
+<span className="text-slate-700">Resources</span>
+        </nav>
+
+        <Link
+          href="/login"
+          className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          Log Out
+        </Link>
+      </div>
+
+      {/* Mobile Menu Button */}
+      <button
+        type="button"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Toggle navigation menu"
+        aria-expanded={menuOpen}
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-700 lg:hidden"
+      >
+        {menuOpen ? (
+          <span className="text-2xl leading-none">×</span>
+        ) : (
+          <span className="text-xl leading-none">☰</span>
+        )}
+      </button>
+    </div>
+
+    {/* Mobile Navigation */}
+    {menuOpen && (
+      <nav className="mt-5 border-t border-slate-200 pt-4 lg:hidden">
+        <div className="flex flex-col">
+          <Link
+            href="/"
+            onClick={() => setMenuOpen(false)}
+            className="rounded-lg px-3 py-3 font-medium text-emerald-700 hover:bg-slate-50"
+          >
+            Dashboard
+          </Link>
+
+          <Link
+            href="/trip"
+            onClick={() => setMenuOpen(false)}
+            className="rounded-lg px-3 py-3 text-slate-700 hover:bg-slate-50"
+          >
+            My Trip
+          </Link>
+
+          <Link
+            href="/support"
+            onClick={() => setMenuOpen(false)}
+            className="rounded-lg px-3 py-3 text-slate-700 hover:bg-slate-50"
+          >
+            Support
+          </Link>
+
+          <span className="rounded-lg px-3 py-3 text-slate-700">
+            Messages
+          </span>
+
+          <span className="rounded-lg px-3 py-3 text-slate-700">
+            Resources
+          </span>
+
+          <Link
+            href="/login"
+            className="mt-2 rounded-lg border border-slate-200 px-3 py-3 font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            Log Out
+          </Link>
         </div>
-      </header>
+      </nav>
+    )}
+  </div>
+</header>
+  
 
       <div className="mx-auto max-w-7xl px-6 py-10">
         <section>
