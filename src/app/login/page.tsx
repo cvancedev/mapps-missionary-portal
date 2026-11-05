@@ -1,6 +1,48 @@
-import Link from "next/link";
+"use client";
+
+import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleLogin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (loading) return;
+
+    setError("");
+    setLoading(true);
+
+    try {
+      const supabase = createClient();
+
+      const { error: authError } =
+        await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
+
+      if (authError) {
+        setError("Unable to sign in. Please check your credentials.");
+        return;
+      }
+
+      router.replace("/profile");
+      router.refresh();
+    } catch {
+      setError("Unable to connect. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
@@ -34,7 +76,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <form className="space-y-5">
+            <form onSubmit={handleLogin} className="space-y-5">
               <div>
                 <label
                   htmlFor="email"
@@ -46,55 +88,63 @@ export default function LoginPage() {
                 <input
                   id="email"
                   type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                   placeholder="you@example.com"
                   className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                 />
               </div>
 
               <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <label
-                    htmlFor="password"
-                    className="text-sm font-medium text-slate-700"
-                  >
-                    Password
-                  </label>
-
-                  <span className="text-sm font-medium text-emerald-700">
-                    Forgot password?
-                  </span>
-                </div>
+                <label
+                  htmlFor="password"
+                  className="mb-2 block text-sm font-medium text-slate-700"
+                >
+                  Password
+                </label>
 
                 <input
                   id="password"
                   type="password"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                   placeholder="Enter your password"
                   className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                 />
               </div>
 
-              <Link
-                href="/"
-                className="block w-full rounded-lg bg-emerald-700 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-emerald-800"
+              {error && (
+                <div
+                  role="alert"
+                  className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+                >
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-lg bg-emerald-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Log In
-              </Link>
+                {loading ? "Signing In..." : "Log In"}
+              </button>
             </form>
 
-            <div className="my-7 flex items-center gap-4">
-              <div className="h-px flex-1 bg-slate-200" />
-              <span className="text-xs font-medium uppercase tracking-wider text-slate-400">
-                New to MAPPS?
-              </span>
-              <div className="h-px flex-1 bg-slate-200" />
-            </div>
+            <div className="mt-7 border-t border-slate-200 pt-6 text-center">
+              <p className="text-sm font-medium text-slate-700">
+                Access by invitation only
+              </p>
 
-            <Link
-              href="/profile"
-              className="block w-full rounded-lg border border-emerald-700 px-4 py-3 text-center text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
-            >
-              Create an Account
-            </Link>
+              <p className="mt-2 text-sm leading-6 text-slate-500">
+                MAPPS accounts are created for approved missionaries and
+                administrators.
+              </p>
+            </div>
           </div>
 
           <p className="mt-6 text-center text-xs leading-5 text-slate-500">
