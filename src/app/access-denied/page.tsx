@@ -50,6 +50,19 @@ export default function AccessDeniedPage() {
           Return to Login
         </Link>
 
+        <form method="post" action="/auth/signout" className="mt-3">
+          <button
+            type="submit"
+            className="w-full cursor-pointer rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Sign Out
+          </button>
+        </form>
+
+        <p className="mt-3 text-xs leading-5 text-slate-500">
+          Signing out lets you use a different account.
+        </p>
+
         <p className="mt-8 text-xs text-slate-500">
           MAPPS Missionary Planning &amp; Support
         </p>

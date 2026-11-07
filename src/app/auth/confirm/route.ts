@@ -22,6 +22,16 @@ export async function GET(request: NextRequest) {
         new URL("/auth/set-password", origin)
       );
     }
+
+    // Map only the documented expiry code, never the raw error text.
+    return NextResponse.redirect(
+      new URL(
+        error.code === "otp_expired"
+          ? "/login?error=expired-invitation"
+          : "/login?error=invalid-invitation",
+        origin
+      )
+    );
   }
 
   return NextResponse.redirect(

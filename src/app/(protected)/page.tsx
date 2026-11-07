@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import InviteSessionHandler from "@/components/invite-session-handler";
 
 export default function Home() {
 
@@ -9,6 +10,7 @@ const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-slate-50">
+     <InviteSessionHandler />
      <header className="border-b border-slate-200 bg-white">
   <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
     <div className="flex items-center justify-between gap-4">
@@ -46,12 +48,14 @@ const [menuOpen, setMenuOpen] = useState(false);
 <span className="text-slate-700">Resources</span>
         </nav>
 
-        <Link
-          href="/login"
-          className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-        >
-          Log Out
-        </Link>
+        <form method="post" action="/auth/signout">
+          <button
+            type="submit"
+            className="cursor-pointer rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Log Out
+          </button>
+        </form>
       </div>
 
       {/* Mobile Menu Button */}
@@ -106,12 +110,14 @@ const [menuOpen, setMenuOpen] = useState(false);
             Resources
           </span>
 
-          <Link
-            href="/login"
-            className="mt-2 rounded-lg border border-slate-200 px-3 py-3 font-semibold text-slate-700 hover:bg-slate-50"
-          >
-            Log Out
-          </Link>
+          <form method="post" action="/auth/signout" className="mt-2">
+            <button
+              type="submit"
+              className="w-full cursor-pointer rounded-lg border border-slate-200 px-3 py-3 text-left font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              Log Out
+            </button>
+          </form>
         </div>
       </nav>
     )}
