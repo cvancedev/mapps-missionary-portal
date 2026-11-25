@@ -17,7 +17,19 @@ const NOTICES: Record<string, string> = {
     "We could not confirm your invitation. Contact your MAPPS coordinator for a new invitation.",
 };
 
-export default function LoginForm({ errorCode }: { errorCode?: string }) {
+// Fixed success codes. Like the error codes above, these are literals only.
+const SUCCESS_NOTICES: Record<string, string> = {
+  "password-created":
+    "Your password was created and this invitation session has ended. Sign in below with your email address and new password.",
+};
+
+export default function LoginForm({
+  errorCode,
+  noticeCode,
+}: {
+  errorCode?: string;
+  noticeCode?: string;
+}) {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -26,6 +38,7 @@ export default function LoginForm({ errorCode }: { errorCode?: string }) {
   const [loading, setLoading] = useState(false);
 
   const notice = errorCode ? NOTICES[errorCode] : undefined;
+  const successNotice = noticeCode ? SUCCESS_NOTICES[noticeCode] : undefined;
 
   async function handleLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -92,6 +105,15 @@ export default function LoginForm({ errorCode }: { errorCode?: string }) {
                 arrangements.
               </p>
             </div>
+
+            {successNotice && (
+              <div
+                role="status"
+                className="mb-5 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm leading-6 text-emerald-900"
+              >
+                {successNotice}
+              </div>
+            )}
 
             {notice && (
               <div

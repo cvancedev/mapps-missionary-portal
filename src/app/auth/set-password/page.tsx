@@ -15,5 +15,7 @@ export default async function SetPasswordPage() {
     redirect("/login?error=session-expired");
   }
 
-  return <SetPasswordForm />;
+  // The email shown to the user comes from the server-validated user record,
+  // never from the URL or any other client-supplied value.
+  return <SetPasswordForm email={user.email ?? "this account"} />;
 }

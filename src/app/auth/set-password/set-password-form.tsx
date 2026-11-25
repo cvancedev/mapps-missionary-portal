@@ -11,7 +11,15 @@ import {
   validateNewPassword,
 } from "./password-policy";
 
-export default function SetPasswordForm() {
+const SIGN_OUT_FAILED =
+  "Your password was created, but we could not end this invitation session. Sign out below, then log in with your new password.";
+
+/**
+ * `email` is supplied by the server component from the validated Supabase user,
+ * so the person creating a password can confirm which account they are
+ * configuring. It is never read from the URL or any client input.
+ */
+export default function SetPasswordForm({ email }: { email: string }) {
   const router = useRouter();
 
   const [password, setPassword] = useState("");
@@ -20,6 +28,7 @@ export default function SetPasswordForm() {
   const [checkingSession, setCheckingSession] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [signOutRequired, setSignOutRequired] = useState(false);
 
   const unmetIds = new Set(
     getUnmetRequirements(password).map((requirement) => requirement.id)
@@ -93,7 +102,26 @@ export default function SetPasswordForm() {
       }
 
       setSuccess(true);
-      router.replace("/profile");
+
+      // End the onboarding session before sending the user to the login page,
+      // so a session this browser did not choose cannot be used afterwards.
+      let signOutFailed = false;
+
+      try {
+        const { error: signOutError } = await supabase.auth.signOut();
+        signOutFailed = Boolean(signOutError);
+      } catch {
+        signOutFailed = true;
+      }
+
+      if (signOutFailed) {
+        // Never report success or redirect while the session may still be live.
+        setError(SIGN_OUT_FAILED);
+        setSignOutRequired(true);
+        return;
+      }
+
+      router.replace("/login?notice=password-created");
       router.refresh();
     } catch {
       setError(
@@ -128,6 +156,29 @@ export default function SetPasswordForm() {
             Your invitation has been verified. Create a secure password
             to access your missionary support portal.
           </p>
+        </div>
+
+        <div className="mb-6 rounded-lg border border-emerald-100 bg-emerald-50 p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-emerald-700">
+            You are setting a password for
+          </p>
+
+          <p className="mt-1 break-words text-sm font-semibold text-emerald-900">
+            {email}
+          </p>
+
+          <p className="mt-2 text-xs leading-5 text-emerald-900/80">
+            Continue only if this email address is yours.
+          </p>
+
+          <form method="post" action="/auth/signout" className="mt-3">
+            <button
+              type="submit"
+              className="cursor-pointer text-xs font-semibold text-emerald-800 underline underline-offset-2"
+            >
+              Not your account? Sign out
+            </button>
+          </form>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -239,6 +290,17 @@ export default function SetPasswordForm() {
                 : "Create Password"}
           </button>
         </form>
+
+        {signOutRequired && (
+          <form method="post" action="/auth/signout" className="mt-4">
+            <button
+              type="submit"
+              className="w-full cursor-pointer rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Sign Out
+            </button>
+          </form>
+        )}
 
         <p className="mt-6 text-center text-xs text-slate-500">
           MAPPS Missionary Planning &amp; Support

@@ -1,145 +1,136 @@
 import Link from "next/link";
+import { requirePortalAccess } from "@/lib/auth/portal";
+import { getCurrentTrip, getSupportRequests } from "@/lib/data/portal";
+import { formatDate } from "@/lib/format";
+import {
+  supportStatusBadge,
+  supportStatusLabel,
+  supportTypeLabel,
+} from "@/lib/support";
+import SupportForm from "./support-form";
 
-const supportOptions = [
-  {
-    title: "Accommodation",
-    description: "Housing arrangements during your mission visit.",
-  },
-  {
-    title: "Airport Pickup",
-    description: "Transportation from the airport when your team arrives.",
-  },
-  {
-    title: "Local Transportation",
-    description: "Transportation assistance during your mission.",
-  },
-  {
-    title: "Orientation",
-    description: "Pre-arrival guidance, culture, safety, and local information.",
-  },
-  {
-    title: "Ministry Connections",
-    description: "Connections with churches, ministries, and local partners.",
-  },
-];
+export default async function SupportPage() {
+  const { supabase, user } = await requirePortalAccess();
 
-export default function SupportPage() {
+  const [tripResult, requestsResult] = await Promise.all([
+    getCurrentTrip(supabase, user.id),
+    getSupportRequests(supabase, user.id),
+  ]);
+
+  const trip = tripResult.trip;
+  const requests = requestsResult.requests;
+  const loadError = tripResult.error || requestsResult.error;
+
+  const requestedTypes = requests.map((request) => request.request_type);
+
   return (
-    <main className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-          <div>
-            <h1 className="text-lg font-bold text-slate-900">
-              MAPPS Missionary Support Portal
-            </h1>
-            <p className="text-sm text-slate-500">
-              Missionary Planning &amp; Support
-            </p>
-          </div>
-
-          <Link
-            href="/"
-            className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
-          >
-            Dashboard
-          </Link>
-        </div>
-      </header>
-
-      <section className="mx-auto max-w-3xl px-6 py-12">
-        <div className="mb-8">
-          <p className="mb-2 text-sm font-semibold text-emerald-700">
-            Mission Support
-          </p>
-
-          <h2 className="text-3xl font-bold text-slate-900">
-            How can MAPPS support your mission?
-          </h2>
-
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-            Select the services your team may need. Your MAPPS coordinator will
-            review your request and help organize the arrangements.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-900">
-              Support Needs
-            </h3>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Select all that apply to your upcoming mission.
-            </p>
-          </div>
-
-          <div className="mt-6 space-y-3">
-            {supportOptions.map((option) => (
-              <label
-                key={option.title}
-                className="flex cursor-pointer items-start gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-emerald-300 hover:bg-emerald-50/40"
-              >
-                <input
-                  type="checkbox"
-                  className="mt-1 h-4 w-4 accent-emerald-700"
-                />
-
-                <span>
-                  <span className="block text-sm font-semibold text-slate-900">
-                    {option.title}
-                  </span>
-
-                  <span className="mt-1 block text-sm leading-5 text-slate-500">
-                    {option.description}
-                  </span>
-                </span>
-              </label>
-            ))}
-          </div>
-
-          <div className="mt-8 border-t border-slate-200 pt-8">
-            <label
-              htmlFor="additionalNeeds"
-              className="block text-sm font-semibold text-slate-900"
-            >
-              Additional Needs or Information
-            </label>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Tell MAPPS about any other arrangements, accessibility needs, or
-              important information for your team.
-            </p>
-
-            <textarea
-              id="additionalNeeds"
-              rows={5}
-              placeholder="Share any additional information here..."
-              className="mt-4 w-full resize-none rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
-            />
-          </div>
-
-          <div className="mt-8 flex flex-col-reverse gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <Link
-              href="/"
-              className="rounded-lg px-4 py-3 text-center text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
-            >
-              Back to Dashboard
-            </Link>
-
-            <Link
-              href="/"
-              className="rounded-lg bg-emerald-700 px-6 py-3 text-center text-sm font-semibold text-white transition hover:bg-emerald-800"
-            >
-              Submit Support Request
-            </Link>
-          </div>
-        </div>
-
-        <p className="mt-6 text-center text-xs leading-5 text-slate-500">
-          Your MAPPS coordinator will follow up with you as arrangements are
-          reviewed and confirmed.
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mb-8">
+        <p className="mb-2 text-sm font-semibold text-emerald-700">
+          Mission Support
         </p>
-      </section>
-    </main>
+        <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+          How can MAPPS support your mission?
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+          Select the services your team may need. Your MAPPS coordinator will
+          review each request and update its status as arrangements are made.
+        </p>
+      </div>
+
+      {loadError ? (
+        <div
+          role="alert"
+          className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm leading-6 text-red-700"
+        >
+          We could not load your support requests right now. Please refresh the
+          page or contact your MAPPS coordinator.
+        </div>
+      ) : (
+        <div className="space-y-8">
+          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            {trip ? (
+              <SupportForm requestedTypes={requestedTypes} />
+            ) : (
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900">
+                  Add your trip first
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  Support requests are attached to a trip, so MAPPS needs your
+                  destination and dates before coordinating arrangements.
+                </p>
+                <Link
+                  href="/trip"
+                  className="mt-5 inline-flex rounded-lg bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
+                >
+                  Plan Your Trip
+                </Link>
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h3 className="text-lg font-semibold text-slate-900">
+                Your Requests
+              </h3>
+              <span className="text-sm text-slate-500">
+                {requests.length === 0
+                  ? "None submitted yet"
+                  : `${requests.length} submitted`}
+              </span>
+            </div>
+
+            {requests.length === 0 ? (
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                No support requests yet. Choose the support your team needs
+                above and MAPPS will begin coordinating.
+              </p>
+            ) : (
+              <ul className="mt-5 divide-y divide-slate-100">
+                {requests.map((request) => (
+                  <li key={request.id} className="py-4 first:pt-0 last:pb-0">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-medium text-slate-900">
+                          {supportTypeLabel(request.request_type)}
+                        </p>
+
+                        {request.details && (
+                          <p className="mt-1 text-sm leading-6 text-slate-600">
+                            {request.details}
+                          </p>
+                        )}
+
+                        <p className="mt-1 text-xs text-slate-500">
+                          Requested{" "}
+                          {formatDate(
+                            request.created_at?.slice(0, 10) ?? null
+                          ) ?? "recently"}
+                        </p>
+                      </div>
+
+                      <span
+                        className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${supportStatusBadge(
+                          request.status
+                        )}`}
+                      >
+                        {supportStatusLabel(request.status)}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+      )}
+
+      <p className="mt-6 text-center text-xs leading-5 text-slate-500">
+        Your MAPPS coordinator will follow up as arrangements are reviewed and
+        confirmed.
+      </p>
+    </div>
   );
 }
